@@ -36,7 +36,7 @@
                 let tile = tiles[tileValue];
                 
                 buffer.strokeStyle = "#ffffff";
-                buffer.lineWidth = 2;
+                buffer.lineWidth = 1;
                 buffer.fillStyle = tile.color;
                 buffer.rect(top, left, TILE_SIZE, TILE_SIZE);
                 buffer.fill()
@@ -76,8 +76,8 @@
     
     };
     
-    buffer.canvas.width = display.canvas.width = map.width * 5;
-    buffer.canvas.height = display.canvas.height = map.height * 5;
+    buffer.canvas.width = display.canvas.width = map.width 
+    buffer.canvas.height = display.canvas.height = map.height
 
     buffer.imageSmoothingEnabled = display.imageSmoothingEnabled = false;
     
