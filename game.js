@@ -14,17 +14,17 @@
     
             switch(e.keyCode){
     
-                case 37: controller.direction = 'l'; break;
-                case 65: controller.direction = 'l'; break;
+                case 37: controller.direction !== 'r' ? controller.direction = 'l' : null; break;
+                case 65: controller.direction !== 'r' ? controller.direction = 'l' : null; break;
     
-                case 38: controller.direction = 'u'; break;
-                case 87: controller.direction = 'u'; break;
+                case 38: controller.direction !== 'd' ? controller.direction = 'u' : null; break;
+                case 87: controller.direction !== 'd' ? controller.direction = 'u' : null; break;
     
-                case 39: controller.direction = 'r'; break;
-                case 68: controller.direction = 'r'; break;
+                case 39: controller.direction !== 'l' ? controller.direction = 'r' : null; break;
+                case 68: controller.direction !== 'l' ? controller.direction = 'r' : null; break;
     
-                case 40: controller.direction = 'd'; break;
-                case 83: controller.direction = 'd'; break;
+                case 40: controller.direction !== 'u' ? controller.direction = 'd' : null; break;
+                case 83: controller.direction !== 'u' ? controller.direction = 'd' : null; break;
             }
         }
 
@@ -57,20 +57,58 @@
     let snake = {
 
         body: [520,521],
-        head: 500,
-        tail: 501
+        head: 520,
+        // tail: 501
 
     };
 
     /////////GAME LOOP/////////
 
-    function loop(timestamp){
+    let timeStep = 500;
+    let accumTime = window.performance.now();
 
-        console.log(controller.direction);
+    function loop(timestamp){
+        
+        
+        if( timestamp >= accumTime + timeStep){
+            accumTime = timestamp;
+            
+            if(controller.direction === 'l'){
+                // console.log('huah', snake.body)
+                let lostIndex = snake.body.pop();
+                map.tiles[lostIndex] = 0;
+                snake.body.unshift(snake.head - 1)
+                snake.head = snake.body[0];
+            }
+
+            if(controller.direction === 'u'){
+                let lostIndex = snake.body.pop();
+                map.tiles[lostIndex] = 0;
+                snake.body.unshift(snake.head - map.columns);
+                snake.head = snake.body[0];
+            }
+
+            if(controller.direction === 'r'){
+                let lostIndex = snake.body.pop();
+                map.tiles[lostIndex] = 0;
+                snake.body.unshift(snake.head + 1);
+                snake.head = snake.body[0];
+            }
+
+            if(controller.direction === 'd'){
+                let lostIndex = snake.body.pop();
+                map.tiles[lostIndex] = 0;
+                snake.body.unshift(snake.head + map.columns);
+                snake.head = snake.body[0];
+            }
+        }
+
+        
         tileAlter();
         renderTiles();
-        
-        window.requestAnimationFrame(loop)
+        renderDisplay();
+
+        window.requestAnimationFrame(loop);
     };
 
     function tileAlter(){
