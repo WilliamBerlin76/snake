@@ -56,15 +56,42 @@
 
     let snake = {
 
-        body: [520,521],
+        body: [520,521,522,523, 524, 525],
         head: 520,
-        // tail: 501
 
+    };
+
+    function reset(){
+
+        for (let i = 0; i < snake.body.length; i++){
+            map.tiles[snake.body[i]] = 0
+        }
+        snake = {
+
+            body: [520,521,522,523,524,525],
+            head: 520,
+    
+        };
+
+        controller.direction = '';
+    }
+
+    function arrDupe(item, arr){
+        let count = 0;
+
+        for(let i = 0; i < arr.length; i++){
+            arr[i] === item && count++;
+            if(count > 1){
+                return true;
+            }
+        };
+
+        return false;
     };
 
     /////////GAME LOOP/////////
 
-    let timeStep = 500;
+    let timeStep = 300;
     let accumTime = window.performance.now();
 
     function loop(timestamp){
@@ -72,7 +99,15 @@
         
         if( timestamp >= accumTime + timeStep){
             accumTime = timestamp;
+
+            /////////////// LEFT WALL COLLISION /////////////
+            if(controller.direction === 'l' && snake.head % map.columns === 0){
+                alert('you hit a wall');
+                reset()
+            }
             
+            
+            ///////// MOVEMENT ////////
             if(controller.direction === 'l'){
                 // console.log('huah', snake.body)
                 let lostIndex = snake.body.pop();
@@ -101,13 +136,31 @@
                 snake.body.unshift(snake.head + map.columns);
                 snake.head = snake.body[0];
             }
-        }
+
+            /////////// BODY COLLISION///////////////
+            if(arrDupe(snake.head, snake.body)){
+                alert('You ate yourself');
+                reset();
+            }
+
+            /////////////// RIGHT WALL/////////////
+            if(controller.direction === 'r' && snake.head % map.columns === 0){
+                alert('you hit a wall')
+                reset();
+            }
+
+            if(snake.head < 0 || snake.head > map.columns * map.rows){
+                alert('you hit a wall')
+                reset();
+            }
+
+            tileAlter();
+            renderTiles();
+            renderDisplay();
+            
+        };
 
         
-        tileAlter();
-        renderTiles();
-        renderDisplay();
-
         window.requestAnimationFrame(loop);
     };
 
@@ -130,12 +183,8 @@
                 let tileValue = map.tiles[mapIndex];
                 let tile = tiles[tileValue];
                 
-                // buffer.strokeStyle = "#ffffff";
-                // buffer.lineWidth = 1;
                 buffer.fillStyle = tile.color;
                 buffer.fillRect(left+1, top+1, TILE_SIZE-1, TILE_SIZE-1);
-                // buffer.fill()
-                // buffer.stroke()
                
                 mapIndex++;
             }
