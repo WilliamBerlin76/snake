@@ -27,6 +27,19 @@
                 case 40: controller.direction !== 'u' ? controller.direction = 'd' : null; break;
                 case 83: controller.direction !== 'u' ? controller.direction = 'd' : null; break;
             }
+        },
+        boost: false,
+
+        boostKey: (e) => {
+            if(e.keyCode === 32){
+                
+                if (e.type === 'keyup'){
+                    controller.boost = false;
+                } else {
+                    controller.boost = true;
+                }
+            };
+            
         }
 
     }
@@ -122,12 +135,14 @@
     /////////GAME LOOP/////////
 
     let timeStep = 250;
+    let stepReference = timeStep; // used to go back to regular time after boosting
     let accumTime = window.performance.now();
     let score;
 
     function loop(timestamp){
 
         score = snake.body.length - 2;
+        controller.boost ? timeStep = stepReference * 0.2 : timeStep = stepReference;
 
         if( timestamp >= accumTime + timeStep){
             accumTime = timestamp;
@@ -177,8 +192,16 @@
             if(ateFood()){
                 snake.body.push(tail);
                 placeFood();
-                timeStep *= .95;
-            }
+
+                if (controller.boost){
+                    stepReference *= .95;
+                    timeStep = stepReference;
+                } else {
+                    timeStep *= .95;
+                    stepReference = timeStep;
+                }
+                
+            };
 
             /////////// BODY COLLISION///////////////
             if(arrDupe(snake.head, snake.body)){
@@ -278,6 +301,8 @@
 
     window.addEventListener('resize', resize);
     window.addEventListener('keydown', controller.keyStrokes);
+    window.addEventListener('keydown', controller.boostKey);
+    window.addEventListener('keyup', controller.boostKey);
 
     resize();
     window.requestAnimationFrame(loop)
