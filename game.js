@@ -37,7 +37,8 @@
 
     let tiles = {
         0: {color: '#ff0000'},
-        1: {color: '#0000ff'}
+        1: {color: '#0000ff'},
+        2: {color: '#00ff00'}
     };
 
     let map = {
@@ -74,6 +75,7 @@
         };
 
         controller.direction = '';
+        timeStep = 300
     }
 
     function arrDupe(item, arr){
@@ -89,6 +91,28 @@
         return false;
     };
 
+    ///////////// PLACE FOOD FUNCTION //////////////
+    function placeFood(){
+        let arIndex = Math.floor(Math.random() * (map.rows * map.columns)); // find random index in map
+
+        while(map.tiles[arIndex] === 1){
+            arIndex++; // add 1 to index if the index is part of the snake
+        };
+        if(arIndex >= map.tiles.length){
+            arIndex = 0; // set index to 0 if index out of range
+        }
+
+        map.tiles[arIndex] = 2; // set the tile value to 2 for the food 
+    };
+
+    ////////// EAT FOOD ////////////
+
+    function ateFood(){
+        if (map.tiles[snake.head] === 2){
+            return true
+        }
+    }
+
     /////////GAME LOOP/////////
 
     let timeStep = 300;
@@ -102,14 +126,15 @@
 
             /////////////// LEFT WALL COLLISION /////////////
             if(controller.direction === 'l' && snake.head % map.columns === 0){
-                alert('you hit a wall');
-                reset()
+                
+                reset();
+
             }
             
+            let tail = snake.body[snake.body.length - 1]
             
             ///////// MOVEMENT ////////
             if(controller.direction === 'l'){
-                // console.log('huah', snake.body)
                 let lostIndex = snake.body.pop();
                 map.tiles[lostIndex] = 0;
                 snake.body.unshift(snake.head - 1)
@@ -137,6 +162,12 @@
                 snake.head = snake.body[0];
             }
 
+            if(ateFood()){
+                snake.body.push(tail);
+                placeFood();
+                timeStep -= 20;
+            }
+
             /////////// BODY COLLISION///////////////
             if(arrDupe(snake.head, snake.body)){
                 alert('You ate yourself');
@@ -145,13 +176,15 @@
 
             /////////////// RIGHT WALL/////////////
             if(controller.direction === 'r' && snake.head % map.columns === 0){
-                alert('you hit a wall')
+
                 reset();
+
             }
 
             if(snake.head < 0 || snake.head > map.columns * map.rows){
-                alert('you hit a wall')
+
                 reset();
+
             }
 
             tileAlter();
@@ -223,6 +256,7 @@
     buffer.imageSmoothingEnabled = display.imageSmoothingEnabled = false;
     
     tileAlter();
+    placeFood();
     renderTiles();
     renderDisplay();
 
