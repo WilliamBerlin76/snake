@@ -4,6 +4,7 @@
 
     let buffer = document.createElement('canvas').getContext('2d');
     let display = document.querySelector('canvas').getContext('2d');
+    let scoreboard = document.querySelector('p');
 
     //////////CONTROLLER/////////
     let controller = {
@@ -57,7 +58,7 @@
 
     let snake = {
 
-        body: [520,521,522,523, 524, 525],
+        body: [520,521],
         head: 520,
 
     };
@@ -69,13 +70,13 @@
         }
         snake = {
 
-            body: [520,521,522,523,524,525],
+            body: [520,521],
             head: 520,
     
         };
 
         controller.direction = '';
-        timeStep = 300
+        timeStep = 250;
     }
 
     function arrDupe(item, arr){
@@ -93,9 +94,9 @@
 
     ///////////// PLACE FOOD FUNCTION //////////////
     function placeFood(){
-        let arIndex = Math.floor(Math.random() * (map.rows * map.columns)); // find random index in map
+        let arIndex = Math.floor(Math.random() * map.tiles.length); // find random index in map
 
-        while(map.tiles[arIndex] === 1){
+        while(map.tiles[arIndex] === 1 || map.tiles[arIndex] === snake.head){
             arIndex++; // add 1 to index if the index is part of the snake
         };
         if(arIndex >= map.tiles.length){
@@ -111,22 +112,30 @@
         if (map.tiles[snake.head] === 2){
             return true
         }
+    };
+
+    ////// GAME OVER /////////
+    function gameOver(){
+        alert(`GAME OVER!!! \nYour score: ${score}`)
     }
 
     /////////GAME LOOP/////////
 
-    let timeStep = 300;
+    let timeStep = 250;
     let accumTime = window.performance.now();
+    let score;
 
     function loop(timestamp){
-        
-        
+
+        score = snake.body.length - 2;
+
         if( timestamp >= accumTime + timeStep){
             accumTime = timestamp;
 
             /////////////// LEFT WALL COLLISION /////////////
             if(controller.direction === 'l' && snake.head % map.columns === 0){
                 
+                gameOver();
                 reset();
 
             }
@@ -134,55 +143,58 @@
             let tail = snake.body[snake.body.length - 1]
             
             ///////// MOVEMENT ////////
-            if(controller.direction === 'l'){
+            if (controller.direction){
                 let lostIndex = snake.body.pop();
-                map.tiles[lostIndex] = 0;
-                snake.body.unshift(snake.head - 1)
-                snake.head = snake.body[0];
-            }
 
-            if(controller.direction === 'u'){
-                let lostIndex = snake.body.pop();
-                map.tiles[lostIndex] = 0;
-                snake.body.unshift(snake.head - map.columns);
-                snake.head = snake.body[0];
+                if(controller.direction === 'l'){
+                
+                    map.tiles[lostIndex] = 0;
+                    snake.body.unshift(snake.head - 1)
+                    
+                }
+    
+                if(controller.direction === 'u'){
+                    
+                    map.tiles[lostIndex] = 0;
+                    snake.body.unshift(snake.head - map.columns);
+                }
+    
+                if(controller.direction === 'r'){
+                    
+                    map.tiles[lostIndex] = 0;
+                    snake.body.unshift(snake.head + 1);
+                }
+    
+                if(controller.direction === 'd'){
+                    
+                    map.tiles[lostIndex] = 0;
+                    snake.body.unshift(snake.head + map.columns);
+                }
             }
-
-            if(controller.direction === 'r'){
-                let lostIndex = snake.body.pop();
-                map.tiles[lostIndex] = 0;
-                snake.body.unshift(snake.head + 1);
-                snake.head = snake.body[0];
-            }
-
-            if(controller.direction === 'd'){
-                let lostIndex = snake.body.pop();
-                map.tiles[lostIndex] = 0;
-                snake.body.unshift(snake.head + map.columns);
-                snake.head = snake.body[0];
-            }
+            
+            snake.head = snake.body[0];
 
             if(ateFood()){
                 snake.body.push(tail);
                 placeFood();
-                timeStep -= 20;
+                timeStep *= .95;
             }
 
             /////////// BODY COLLISION///////////////
             if(arrDupe(snake.head, snake.body)){
-                alert('You ate yourself');
+                gameOver();
                 reset();
             }
 
             /////////////// RIGHT WALL/////////////
             if(controller.direction === 'r' && snake.head % map.columns === 0){
-
+                gameOver();
                 reset();
 
             }
 
             if(snake.head < 0 || snake.head > map.columns * map.rows){
-
+                gameOver();
                 reset();
 
             }
@@ -192,8 +204,12 @@
             renderDisplay();
             
         };
+        if (snake.body.length === map.tiles.length){
+            alert('CONGRATULATIONS!! \n YOU HAVE WON!!');
+            reset();
+        };
 
-        
+        scoreboard.innerHTML = `Score: ${score}`;
         window.requestAnimationFrame(loop);
     };
 
