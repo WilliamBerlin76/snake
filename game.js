@@ -109,15 +109,17 @@
 
     ///////////// PLACE FOOD FUNCTION //////////////
     function placeFood(){
-        let arIndex = Math.floor(Math.random() * map.tiles.length); // find random index in map
-
-        while(map.tiles[arIndex] === 1 || map.tiles[arIndex] === snake.head){
+        let arIndex = Math.floor(Math.random() * (map.rows * map.columns)); // find random index in map
+        
+        while(map.tiles[arIndex] === 1 || arIndex === snake.head || arIndex === snake.body[snake.body.length - 1]){
+            
             arIndex++; // add 1 to index if the index is part of the snake
         };
-        if(arIndex >= map.tiles.length){
+        if(arIndex >= map.rows * map.columns){
+            
             arIndex = 0; // set index to 0 if index out of range
         }
-
+        
         map.tiles[arIndex] = 2; // set the tile value to 2 for the food 
     };
 
