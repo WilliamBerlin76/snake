@@ -90,6 +90,8 @@
 
         controller.direction = '';
         timeStep = 250;
+        stepReference = timeStep;
+        controller.boost = false;
     }
 
     function arrDupe(item, arr){
