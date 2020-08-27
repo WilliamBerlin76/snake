@@ -166,28 +166,54 @@
                 let lostIndex = snake.body.pop();
 
                 if(controller.direction === 'l'){
-                
-                    map.tiles[lostIndex] = 0;
-                    snake.body.unshift(snake.head - 1)
+                    
+                    if (snake.body[1] === snake.head - 1){ 
+                        /* make sure snake doesn't eat itself 
+                            if buttons press too fast
+                        */
+                        controller.direction = 'r';
+                    } else {
+                        map.tiles[lostIndex] = 0;
+                        snake.body.unshift(snake.head - 1)
+                    }
                     
                 }
     
                 if(controller.direction === 'u'){
                     
-                    map.tiles[lostIndex] = 0;
-                    snake.body.unshift(snake.head - map.columns);
+                    if(snake.body[1] === snake.head - map.columns){
+                        controller.direction = 'd';
+                    } else {
+                        map.tiles[lostIndex] = 0;
+                        snake.body.unshift(snake.head - map.columns);
+                    }
+                    
                 }
     
                 if(controller.direction === 'r'){
-                    
+
                     map.tiles[lostIndex] = 0;
-                    snake.body.unshift(snake.head + 1);
+                    
+                    if (snake.body[1] === snake.head + 1){ 
+                        snake.body.unshift(snake.head - 1);
+                        controller.direction = 'l';
+                    } else {
+                        
+                        snake.body.unshift(snake.head + 1);
+                    }
+                    
                 }
     
                 if(controller.direction === 'd'){
-                    
                     map.tiles[lostIndex] = 0;
-                    snake.body.unshift(snake.head + map.columns);
+                    if(snake.body[1] === snake.head + map.columns){
+                        
+                        controller.direction = 'u';
+                        snake.body.unshift(snake.head - map.columns);
+                    } else {
+                        snake.body.unshift(snake.head + map.columns);
+                    }
+                    
                 }
             }
             
@@ -231,7 +257,7 @@
             renderDisplay();
             
         };
-        if (snake.body.length === map.tiles.length){
+        if (snake.body.length >= map.rows * map.columns){
             alert('CONGRATULATIONS!! \n YOU HAVE WON!!');
             reset();
         };
