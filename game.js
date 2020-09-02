@@ -12,7 +12,7 @@ import { TILE_SIZE, tiles, map} from "./map.js";
 
     ///////// PLAYER /////////
 
-    export let snake = {
+    let snake = {
 
         body: [520,521],
         head: 520,
