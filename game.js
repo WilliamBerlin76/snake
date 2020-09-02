@@ -1,3 +1,7 @@
+import { arrDupe } from "./helpers.js";
+import { controller } from "./controller.js";
+import { TILE_SIZE, tiles, map} from "./map.js";
+
 (() => {
 
     /////// CANVAS ///////////
@@ -6,70 +10,9 @@
     let display = document.querySelector('canvas').getContext('2d');
     let scoreboard = document.querySelector('p');
 
-    //////////CONTROLLER/////////
-    let controller = {
-
-        direction: '',
-    
-        keyStrokes: (e) => {
-    
-            switch(e.keyCode){
-    
-                case 37: controller.direction !== 'r' ? controller.direction = 'l' : null; break;
-                case 65: controller.direction !== 'r' ? controller.direction = 'l' : null; break;
-    
-                case 38: controller.direction !== 'd' ? controller.direction = 'u' : null; break;
-                case 87: controller.direction !== 'd' ? controller.direction = 'u' : null; break;
-    
-                case 39: controller.direction !== 'l' ? controller.direction = 'r' : null; break;
-                case 68: controller.direction !== 'l' ? controller.direction = 'r' : null; break;
-    
-                case 40: controller.direction !== 'u' ? controller.direction = 'd' : null; break;
-                case 83: controller.direction !== 'u' ? controller.direction = 'd' : null; break;
-            }
-        },
-        boost: false,
-
-        boostKey: (e) => {
-            if(e.keyCode === 32){
-                
-                if (e.type === 'keyup'){
-                    controller.boost = false;
-                } else {
-                    controller.boost = true;
-                }
-            };
-            
-        }
-
-    }
-
-
-    //////////MAP///////////
-
-    let TILE_SIZE = 15;
-
-    let tiles = {
-        0: {color: '#ff0000'},
-        1: {color: '#0000ff'},
-        2: {color: '#00ff00'}
-    };
-
-    let map = {
-
-        columns: 45,
-        rows: 23,
-        height: 23 * TILE_SIZE,
-        width: 45 * TILE_SIZE,
-        widthHeightRatio: 45 / 23,
-
-        tiles: new Array(45 * 23).fill(0) // 1d tile map
-
-    };
-
     ///////// PLAYER /////////
 
-    let snake = {
+    export let snake = {
 
         body: [520,521],
         head: 520,
@@ -93,19 +36,6 @@
         stepReference = timeStep;
         controller.boost = false;
     }
-
-    function arrDupe(item, arr){
-        let count = 0;
-
-        for(let i = 0; i < arr.length; i++){
-            arr[i] === item && count++;
-            if(count > 1){
-                return true;
-            }
-        };
-
-        return false;
-    };
 
     ///////////// PLACE FOOD FUNCTION //////////////
     function placeFood(){
