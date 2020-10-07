@@ -164,7 +164,7 @@ import { TILE_SIZE, tiles, map} from "./map.js";
             };
 
             /////////// BODY COLLISION///////////////
-            if(arrDupe(snake.head, snake.body)){
+            if(arrDupe(snake.body)){
                 gameOver();
                 reset();
             }
